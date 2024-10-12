@@ -33,35 +33,35 @@ class BoxDev extends BaseController
         return view('new_file');
     }
 
-    // public function postDownload_file(){
-    //     $post =$this->request->getPost();
-    //     $fileId = $post['file_id'];
-    //     $fileName = $post['file_name'];
-
-    //     // log_message('error', json_encode($post));
-
-    //     $boxDev = new \App\Libraries\BoxDev();
-    //     $fileData = $boxDev->downloadFile($fileId, $fileName);
-
-    //     // Check if an error occurred
-    //     if (isset($fileData['error'])) {
-    //         return $this->response->setJSON(['error' => $fileData['error']]);
-    //     }
-
-    //     // Set the headers for file download and send the file content back to the browser
-    //     return $this->response
-    //         ->setHeader('Content-Type', $fileData['content_type'])  // Set the correct content type
-    //         ->setHeader('Content-Disposition', 'attachment; filename="' . $fileData['file_name'] . '"')  // Set the file name for download
-    //         ->setBody($fileData['content']);  // Output the file content
-
-    // }
-
     public function postDownload_file(){
+        $post =$this->request->getPost();
+        $fileId = $post['file_id'];
+        $fileName = $post['file_name'];
+
+        // log_message('error', json_encode($post));
+
+        $server_download_path = WRITEPATH . 'uploads/';
+
+        $boxDev = new \App\Libraries\BoxDev();
+        $fileData = $boxDev->downloadFile($fileId, $fileName, $server_download_path);
+
+        // Check if an error occurred
+        if (isset($fileData['error'])) {
+            return $this->response->setJSON(['error' => $fileData['error']]);
+        }
+
+        return $this->response
+            ->setHeader('Content-Type', $fileData['content_type'])  // Automatically detect the content type
+            ->setHeader('Content-Disposition', 'attachment; filename="' . $fileData['file_name'] . '"')  // Set the filename for download
+            ->setBody($fileData['content']);  // Send the file content as the response body
+    }
+
+    public function postDownload_file_url(){
         $post = $this->request->getPost();
         $fileId = $post['file_id'];
 
         $boxDev = new \App\Libraries\BoxDev();
-        $downloadURL = $boxDev->downloadFile($fileId);
+        $downloadURL = $boxDev->downloadFileURL($fileId);
 
         return $downloadURL;
     }

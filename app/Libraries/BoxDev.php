@@ -72,7 +72,7 @@ class BoxDev {
     
     }
 
-    function downloadFile($file_id){
+    function downloadFileURL($file_id){
         // Initialize cURL session
         $curl = curl_init();
 
@@ -99,47 +99,27 @@ class BoxDev {
         // Close the cURL session
         curl_close($curl);
 
-        // log_message('error', $fileURL);
-
         return $fileURL;
     }
 
-    // function downloadFile($file_id, $fileName){
-    //     // Initialize cURL session
-    //     $curl = curl_init();
+    function downloadFile($file_id, $fileName, $serverDownloadPath){
+        $fileContentURL = $this->downloadFileURL($file_id);
+        
+        file_put_contents(WRITEPATH . 'uploads/' . $fileName, fopen($fileContentURL, 'r'));
 
-    //     // Set the cURL options
-    //     curl_setopt_array($curl, [
-    //         CURLOPT_URL => "https://api.box.com/2.0/files/$file_id/content",
-    //         CURLOPT_RETURNTRANSFER => true, // To return the response as a string
-    //         CURLOPT_HTTPHEADER => [
-    //             'Authorization: Bearer '.$this->accessToken(), // Add authorization header
-    //         ],
-    //         CURLOPT_CUSTOMREQUEST => 'GET', // Set the request method to GET
-    //     ]);
+        // Read the file content from the saved file
+        $fileContent = file_get_contents($serverDownloadPath . $fileName);
 
-    //     $fileContent = curl_exec($curl);
+        $content_type = mime_content_type($serverDownloadPath . $fileName);
 
-    //     // Check for errors
-    //     if (curl_errno($curl)) {
-    //         // Return an error message
-    //         return ['error' => curl_error($curl)];
-    //     }
-
-    //     // Get the content type (for example, image/jpeg, application/pdf, etc.)
-    //     $contentType = curl_getinfo($curl, CURLINFO_CONTENT_TYPE);
-    //     log_message('error', json_encode($fileContent));
-
-    //     // Close the cURL session
-    //     curl_close($curl);
-
-    //     // Return the file content and content type
-    //     return [
-    //         'content' => $fileContent,
-    //         'content_type' => $contentType,
-    //         'file_name' => $fileName  // Default name; adjust or extract as needed
-    //     ];
-    // }
+        unlink(WRITEPATH . 'uploads/' . $fileName);
+        // Return the file content and content type
+        return [
+            'content_type' => $content_type,
+            'content' => $fileContent,
+            'file_name' => $fileName  // Default name; adjust or extract as needed
+        ];
+    }
 
     function accessToken(): string {
         // Initialize cURL session
