@@ -154,8 +154,8 @@ class BoxDev {
                 'Content-Type: application/x-www-form-urlencoded',
             ],
             CURLOPT_POSTFIELDS => http_build_query([
-                'client_id' => 'j24rxqdh70kpp77f45dcokqpu8g008d3',
-                'client_secret' => 'lB0Ad3NsYm8G6ZG9Q3Eo78YP9Q2IpzRz',
+                'client_id' => env('box.client_id'),
+                'client_secret' => env('box.client_secret'),
                 'grant_type' => 'client_credentials',
                 'box_subject_type' => 'enterprise',
                 'box_subject_id' => '5051018',
