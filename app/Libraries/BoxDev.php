@@ -121,6 +121,20 @@ class BoxDev {
         ];
     }
 
+    function folderInfo($folder_id){
+        $response = $this->client->request('GET', "https://api.box.com/2.0/folders/$folder_id", [
+            'headers' => [
+                'Authorization' => 'Bearer '.$this->accessToken(),
+            ],
+            'http_errors' => false,
+            'timeout' => 30,
+        ]);
+
+        $folderInfoObj = $response->getBody();
+        $folderInfo = json_decode($folderInfoObj, true);
+        return $folderInfo;
+    }
+
     function accessToken(): string {
         // Initialize cURL session
         $curl = curl_init();

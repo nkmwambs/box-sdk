@@ -118,4 +118,11 @@ class BoxDev extends BaseController
         return $this->response->setJSON($response);
     }
 
+    function getFolder_info($folder_id){
+        $boxDev = new \App\Libraries\BoxDev();
+        $response = $boxDev->folderInfo($folder_id);
+
+        return $this->response->setJSON($response);
+    }
+
 }
