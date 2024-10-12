@@ -158,7 +158,7 @@ class BoxDev {
                 'client_secret' => env('box.client_secret'),
                 'grant_type' => 'client_credentials',
                 'box_subject_type' => 'enterprise',
-                'box_subject_id' => '5051018',
+                'box_subject_id' => env('box.subject_id'),
             ]),
         ]);
         

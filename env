@@ -71,3 +71,4 @@
 # Box OAuth 2.0 with client credentials grant (server authentication)
 box.client_id = 'xxxxxx'
 box.client_secret = 'yyyy'
+box.subject_id = '12345'
