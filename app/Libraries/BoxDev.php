@@ -173,5 +173,18 @@ class BoxDev {
         // log_message('error', $token);
         return $token;
     }
+
+    function deleteFile($file_id){
+        $response = $this->client->request('DELETE', "https://api.box.com/2.0/files/$file_id", [
+            'headers' => [
+                'Authorization' => 'Bearer '.$this->accessToken(),
+            ],
+            'http_errors' => false,
+        ]);
+
+        $deleteResponseObj = $response->getBody();
+        $deleteResponse = json_decode($deleteResponseObj, true);
+        return $deleteResponse;
+    }
     
 }

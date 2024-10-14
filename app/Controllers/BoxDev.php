@@ -14,7 +14,7 @@ class BoxDev extends BaseController
     protected $folder_id;
     public function __construct(){
         $this->client = \Config\Services::curlrequest();
-        $this->folder_id = '288788317902'; // Replace with your folder id.
+        $this->folder_id = env('box.root_folder_id'); //'288788317902'; // Replace with your folder id.
     }
     public function initController(RequestInterface $request, ResponseInterface $response, LoggerInterface $logger)
     {
@@ -123,6 +123,20 @@ class BoxDev extends BaseController
         $response = $boxDev->folderInfo($folder_id);
 
         return $this->response->setJSON($response);
+    }
+
+    function postDelete_file(){
+        $post = $this->request->getPost();
+        $fileId = $post['file_id'];
+
+        $boxDev = new \App\Libraries\BoxDev();
+        $response = $boxDev->deleteFile($fileId);
+
+        // Delete record from attachments
+        $attachmentModel = new \App\Models\Attachments();
+        $attachmentModel->where('file_id', $fileId)->delete();
+
+        return $this->response->setJSON(['success' => true]);
     }
 
 }

@@ -72,3 +72,4 @@
 box.client_id = 'xxxxxx'
 box.client_secret = 'yyyy'
 box.subject_id = '12345'
+box.root_folder_id = '12345'

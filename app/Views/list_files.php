@@ -68,9 +68,9 @@
                     <?php foreach($attachments as $attachment):?>
                         <tr>
                             <td>
-                                <div class = "btn btn-danger delete_file">Delete</div>
-                                <div class = 'btn btn-success download_file_link' data-file_name = "<?=$attachment['name']?>" id = "<?=$attachment['file_id'];?>">Download File [Link]</div>
-                                <div class = 'btn btn-success download_file' data-file_name = "<?=$attachment['name']?>" id = "<?=$attachment['file_id'];?>">Download File</div>
+                                <div class = "btn btn-danger delete_file" id = "delete_<?=$attachment['file_id'];?>">Delete</div>
+                                <div class = 'btn btn-success download_file_link' data-file_name = "<?=$attachment['name']?>" id = "url_<?=$attachment['file_id'];?>">Download File [Link]</div>
+                                <div class = 'btn btn-success download_file' data-file_name = "<?=$attachment['name']?>" id = "file_<?=$attachment['file_id'];?>">Download File</div>
 
                             </td>
                             <td><?=$attachment['name']?></td>
@@ -89,7 +89,7 @@
     });  
 
     $('.download_file').on('click', function() {
-        const id = $(this).attr('id');
+        const id = $(this).attr('id').split('_')[1];
         const file_name = $(this).data('file_name');
 
 
@@ -124,7 +124,7 @@
 
 
     $('.download_file_link').on('click', function() {
-        const id = $(this).attr('id');
+        const id = $(this).attr('id').split('_')[1];
         const file_name = $(this).data('file_name');
             
         // Make an AJAX request to download file via link
@@ -146,6 +146,37 @@
             }
         });
     })
+
+    $('.delete_file').on('click', function() {
+        const id = $(this).attr('id').split('_')[1];
+
+        $.ajax({
+            url: '<?=site_url('boxdev/delete_file')?>',
+            type: 'POST',
+            data: { file_id: id},
+            beforeSend: function(){
+                $("#alert").html('Wait for the download to be deleted')
+            },
+            success: function(response) {
+                if(response.success){
+                    $("#alert").html('File deleted successfully')
+                    $('#delete_'+id).parent().parent().remove();
+                } else {
+                    $("#alert").html('An error occurred while deleting the file')
+                }
+            },
+            error: function(xhr, status, error) {
+                $("#alert").html('An error occurred during the deletion')
+            },
+            complete: function(){
+                setTimeout(() => {
+                    $("#alert").html('')
+                }, 10);
+            }
+        })
+    });
+
+    
 </script>
     
 </body>
