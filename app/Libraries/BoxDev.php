@@ -2,7 +2,9 @@
 
 namespace App\Libraries;
 class BoxDev {
+    private $write_path = null;
     public function __construct(){
+        $this->write_path = WRITEPATH.'uploads/'; // Update this path accordingly
     }
   
 
@@ -122,14 +124,14 @@ class BoxDev {
     function downloadFile($file_id, $fileName, $serverDownloadPath){
         $fileContentURL = $this->downloadFileURL($file_id);
         
-        file_put_contents(WRITEPATH . 'uploads/' . $fileName, fopen($fileContentURL, 'r'));
+        file_put_contents($this->write_path . $fileName, fopen($fileContentURL, 'r'));
 
         // Read the file content from the saved file
         $fileContent = file_get_contents($serverDownloadPath . $fileName);
 
         $content_type = mime_content_type($serverDownloadPath . $fileName);
 
-        unlink(WRITEPATH . 'uploads/' . $fileName);
+        unlink($this->write_path . $fileName);
         // Return the file content and content type
         return [
             'content_type' => $content_type,
