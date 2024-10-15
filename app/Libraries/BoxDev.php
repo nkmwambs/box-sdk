@@ -2,30 +2,47 @@
 
 namespace App\Libraries;
 class BoxDev {
-    private $client;
     public function __construct(){
-        $this->client = \Config\Services::curlrequest();
     }
-    function folderItems($folder_id, $type = 'all'): array  {
-        // type can be all, file or folder
-        $response = $this->client->request('GET', "https://api.box.com/2.0/folders/$folder_id/items", [
-            'headers' => [
-                'Authorization' => 'Bearer '.$this->accessToken(),
-            ],
-            'http_errors' => false,
+  
+
+    function folderItems($folder_id, $type = 'all'): array {
+        // Initialize cURL
+        $ch = curl_init();
+    
+        // Set cURL options
+        curl_setopt($ch, CURLOPT_URL, "https://api.box.com/2.0/folders/$folder_id/items");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $this->accessToken(),
         ]);
-
-        $entriesObj = $response->getBody();
-        $entries = json_decode($entriesObj, true)['entries'];
-
-        if($type != 'all'){
+        curl_setopt($ch, CURLOPT_FAILONERROR, false);
+    
+        // Execute the request
+        $response = curl_exec($ch);
+    
+        // Check for cURL errors
+        if (curl_errno($ch)) {
+            curl_close($ch);
+            return [];
+        }
+    
+        // Close the cURL handle
+        curl_close($ch);
+    
+        // Decode the response
+        $entries = json_decode($response, true)['entries'];
+    
+        // Filter by type if needed
+        if ($type != 'all') {
             $entries = array_filter($entries, function($entry) use ($type) {
                 return $entry['type'] === $type;
             });
         }
-       
+    
         return $entries;
     }
+    
 
     function uploadFile($folder_id, $filePath){
 
@@ -121,19 +138,37 @@ class BoxDev {
         ];
     }
 
-    function folderInfo($folder_id){
-        $response = $this->client->request('GET', "https://api.box.com/2.0/folders/$folder_id", [
-            'headers' => [
-                'Authorization' => 'Bearer '.$this->accessToken(),
-            ],
-            'http_errors' => false,
-            'timeout' => 30,
+    function folderInfo($folder_id) {
+        // Initialize cURL
+        $ch = curl_init();
+    
+        // Set cURL options
+        curl_setopt($ch, CURLOPT_URL, "https://api.box.com/2.0/folders/$folder_id");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $this->accessToken(),
         ]);
-
-        $folderInfoObj = $response->getBody();
-        $folderInfo = json_decode($folderInfoObj, true);
+        curl_setopt($ch, CURLOPT_FAILONERROR, false);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    
+        // Execute the request
+        $response = curl_exec($ch);
+    
+        // Check for cURL errors
+        if (curl_errno($ch)) {
+            curl_close($ch);
+            return [];
+        }
+    
+        // Close the cURL handle
+        curl_close($ch);
+    
+        // Decode the response
+        $folderInfo = json_decode($response, true);
+    
         return $folderInfo;
     }
+    
 
     function accessToken(): string {
         // Initialize cURL session
@@ -174,17 +209,36 @@ class BoxDev {
         return $token;
     }
 
-    function deleteFile($file_id){
-        $response = $this->client->request('DELETE', "https://api.box.com/2.0/files/$file_id", [
-            'headers' => [
-                'Authorization' => 'Bearer '.$this->accessToken(),
-            ],
-            'http_errors' => false,
+    function deleteFile($file_id) {
+        // Initialize cURL
+        $ch = curl_init();
+    
+        // Set cURL options
+        curl_setopt($ch, CURLOPT_URL, "https://api.box.com/2.0/files/$file_id");
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $this->accessToken(),
         ]);
-
-        $deleteResponseObj = $response->getBody();
-        $deleteResponse = json_decode($deleteResponseObj, true);
+        curl_setopt($ch, CURLOPT_FAILONERROR, false);
+    
+        // Execute the request
+        $response = curl_exec($ch);
+    
+        // Check for cURL errors
+        if (curl_errno($ch)) {
+            curl_close($ch);
+            return [];
+        }
+    
+        // Close the cURL handle
+        curl_close($ch);
+    
+        // Decode the response
+        $deleteResponse = json_decode($response, true);
+    
         return $deleteResponse;
     }
+    
     
 }
